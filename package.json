@@ -1,0 +1,26 @@
+{
+  "name": "boundless-records-website",
+  "version": "1.0.0",
+  "description": "Official website for Boundless Records - South Florida's premier independent music label featuring Bennett Boundless and Alma de Agustina",
+  "main": "index.html",
+  "scripts": {
+    "dev": "cd audio-app && npm run dev",
+    "start": "cd audio-app && npm start",
+    "audio-install": "cd audio-app && npm install"
+  },
+  "keywords": [
+    "music",
+    "record-label",
+    "south-florida",
+    "independent-music",
+    "bennett-boundless",
+    "alma-de-agustina"
+  ],
+  "author": "Boundless Records",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/YOUR_USERNAME/boundless-records.git"
+  },
+  "homepage": "https://boundlessrecords.xyz"
+}

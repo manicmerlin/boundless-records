@@ -133,8 +133,11 @@ wss.on('connection', function connection(ws) {
 });
 
 const PORT = process.env.PORT || 3000;
-server.listen(PORT, () => {
-    console.log(`Audio streaming server running on http://localhost:${PORT}`);
-    console.log(`Broadcast at: http://localhost:${PORT}/broadcast`);
-    console.log(`Listen at: http://localhost:${PORT}/listen`);
+server.listen(PORT, '0.0.0.0', () => {
+    console.log(`Audio streaming server running on port ${PORT}`);
+    console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
+    if (process.env.NODE_ENV !== 'production') {
+        console.log(`Broadcast at: http://localhost:${PORT}/broadcast`);
+        console.log(`Listen at: http://localhost:${PORT}/listen`);
+    }
 });

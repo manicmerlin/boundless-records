@@ -4,8 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Boundless Records - South Florida Music Label</title>
-    <meta name="description" content="Boundless Records - Independent music label based in South Florida, featuring artists Bennett Boundless and Alma de Agustina.">
-    <meta name="keywords" content="Boundless Records, South Florida, music label, Bennett Boundless, Alma de Agustina, independent music">
     <style>
         * {
             margin: 0;
@@ -71,21 +69,6 @@
 
         .nav-links a:hover {
             color: #ffd93d;
-        }
-
-        /* Mobile Menu */
-        .mobile-menu {
-            display: none;
-            flex-direction: column;
-            cursor: pointer;
-        }
-
-        .mobile-menu span {
-            width: 25px;
-            height: 3px;
-            background: #fff;
-            margin: 3px 0;
-            transition: 0.3s;
         }
 
         /* Hero Section */
@@ -273,10 +256,6 @@
                 display: none;
             }
 
-            .mobile-menu {
-                display: flex;
-            }
-
             .hero h1 {
                 font-size: 2.5rem;
             }
@@ -350,11 +329,6 @@
                     <li><a href="#artists">Artists</a></li>
                     <li><a href="#contact">Contact</a></li>
                 </ul>
-                <div class="mobile-menu">
-                    <span></span>
-                    <span></span>
-                    <span></span>
-                </div>
             </nav>
         </div>
     </header>
@@ -423,10 +397,6 @@
                             <h4>🎵 Music Submissions</h4>
                             <p>Send us your demos and let's create something amazing together</p>
                         </div>
-                        <div class="contact-item">
-                            <h4>🎙️ Live Streaming</h4>
-                            <p><a href="https://stream.boundlessrecords.xyz" style="color: #ffd93d; text-decoration: none;">Access our audio streaming platform</a></p>
-                        </div>
                     </div>
                 </div>
             </div>
@@ -448,14 +418,6 @@
                     behavior: 'smooth'
                 });
             });
-        });
-
-        // Mobile menu toggle
-        const mobileMenu = document.querySelector('.mobile-menu');
-        const navLinks = document.querySelector('.nav-links');
-
-        mobileMenu.addEventListener('click', () => {
-            navLinks.style.display = navLinks.style.display === 'flex' ? 'none' : 'flex';
         });
 
         // Fade in animation on scroll

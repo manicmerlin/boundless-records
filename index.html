@@ -229,6 +229,32 @@
             display: block;
         }
 
+        /* Artist Links */
+        .artist-links {
+            margin-top: 1.5rem;
+        }
+
+        .artist-link {
+            display: inline-block;
+            background: rgba(255, 255, 255, 0.2);
+            color: #fff;
+            padding: 10px 20px;
+            text-decoration: none;
+            border-radius: 25px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            backdrop-filter: blur(5px);
+        }
+
+        .artist-link:hover {
+            background: rgba(255, 255, 255, 0.3);
+            border-color: rgba(255, 255, 255, 0.6);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
         /* Contact Section */
         .contact {
             background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
@@ -399,6 +425,11 @@
                         <span class="artist-icon">🎶</span>
                         <h3>Alma de Agustina</h3>
                         <p>An emerging talent with a soulful voice and captivating stage presence. Alma de Agustina brings heartfelt storytelling and emotional depth to every performance, creating music that resonates with audiences worldwide.</p>
+                        <div class="artist-links">
+                            <a href="https://artists.landr.com/057829269590" target="_blank" class="artist-link">
+                                🎵 Listen on Streaming Platforms
+                            </a>
+                        </div>
                     </div>
                 </div>
             </div>

@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Audio Streaming App</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        .container {
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            text-align: center;
+        }
+        .option-card {
+            display: inline-block;
+            margin: 20px;
+            padding: 40px 30px;
+            border: 3px solid #667eea;
+            border-radius: 15px;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            text-decoration: none;
+            color: #667eea;
+            transition: all 0.3s ease;
+            min-width: 200px;
+        }
+        .option-card:hover {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(102, 126, 234, 0.4);
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 2.5em;
+        }
+        h3 {
+            margin: 15px 0 10px 0;
+            font-size: 1.3em;
+        }
+        p {
+            margin: 5px 0;
+            font-size: 14px;
+            opacity: 0.8;
+        }
+        .subtitle {
+            color: #666;
+            font-size: 1.1em;
+            margin-bottom: 40px;
+        }
+        .emoji {
+            font-size: 2em;
+            display: block;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎵 Live Audio Streaming</h1>
+        <p class="subtitle">Stream and listen to live audio in real-time</p>
+        
+        <a href="/broadcast" class="option-card">
+            <span class="emoji">🎙️</span>
+            <h3>Start Broadcasting</h3>
+            <p>Stream your microphone audio live</p>
+            <p><small>🔒 Password required</small></p>
+        </a>
+        
+        <a href="/listen" class="option-card">
+            <span class="emoji">🎧</span>
+            <h3>Join as Listener</h3>
+            <p>Listen to live audio streams</p>
+        </a>
+        
+        <a href="/boundless-records" class="option-card">
+            <span class="emoji">🎵</span>
+            <h3>Boundless Records</h3>
+            <p>Visit our record label website</p>
+        </a>
+        
+        <div style="margin-top: 40px; padding-top: 30px; border-top: 1px solid #eee;">
+            <h3>How it works:</h3>
+            <p>1. <strong>Broadcaster</strong> logs in with password and starts streaming</p>
+            <p>2. <strong>Listeners</strong> can join freely and hear the live audio</p>
+            <p>3. Real-time communication via WebSockets</p>
+        </div>
+    </div>
+</body>
+</html>

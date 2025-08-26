@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Audio Broadcaster</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        .container {
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        .controls {
+            text-align: center;
+            margin: 30px 0;
+        }
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            margin: 10px;
+            transition: all 0.3s ease;
+            min-width: 150px;
+        }
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+        button:disabled {
+            background: #6c757d;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        .status {
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            text-align: center;
+            font-weight: bold;
+            font-size: 1.1em;
+        }
+        .status.disconnected {
+            background: #f8d7da;
+            color: #721c24;
+            border: 2px solid #f5c6cb;
+        }
+        .status.connected {
+            background: #d4edda;
+            color: #155724;
+            border: 2px solid #c3e6cb;
+        }
+        .status.streaming {
+            background: #fff3cd;
+            color: #856404;
+            border: 2px solid #ffeaa7;
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.7; }
+            100% { opacity: 1; }
+        }
+        .listeners {
+            margin: 20px 0;
+            text-align: center;
+            font-size: 1.2em;
+            color: #333;
+        }
+        .listeners-count {
+            font-weight: bold;
+            color: #667eea;
+        }
+        .back-link {
+            display: inline-block;
+            margin-bottom: 20px;
+            color: #667eea;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        .back-link:hover {
+            text-decoration: underline;
+        }
+        .instructions {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 8px;
+            margin: 30px 0;
+        }
+        .instructions h3 {
+            margin-top: 0;
+            color: #333;
+        }
+        .instructions ol {
+            text-align: left;
+            color: #555;
+        }
+        .instructions li {
+            margin: 10px 0;
+            line-height: 1.5;
+        }
+        .url-highlight {
+            background: #e9ecef;
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-family: 'Monaco', 'Courier New', monospace;
+            color: #495057;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="/" class="back-link">← Back to Home</a>
+        
+        <h1>🎙️ Audio Broadcaster - Authenticated</h1>
+        
+        <div id="status" class="status disconnected">
+            Connecting to server...
+        </div>
+        
+        <div class="listeners">
+            <span class="listeners-count" id="listenerCount">0</span> listeners connected
+        </div>
+        
+        <div class="controls">
+            <button id="startBtn" onclick="startBroadcast()">Start Broadcasting</button>
+            <button id="stopBtn" onclick="stopBroadcast()" disabled>Stop Broadcasting</button>
+        </div>
+        
+        <div class="instructions">
+            <h3>📋 Broadcasting Instructions:</h3>
+            <ol>
+                <li>Click <strong>"Start Broadcasting"</strong> to begin streaming your microphone</li>
+                <li>Allow microphone access when your browser prompts you</li>
+                <li>Share this URL with your audience: <br><span class="url-highlight" id="listenerUrl">https://audiocast.ngrok.io/listen</span></li>
+                <li>Monitor the listener count above</li>
+                <li>Click <strong>"Stop Broadcasting"</strong> when you're finished</li>
+            </ol>
+        </div>
+    </div>
+
+    <script>
+        let mediaRecorder;
+        let socket;
+        let audioContext;
+        let source;
+        
+        function updateStatus(message, className) {
+            const statusEl = document.getElementById('status');
+            statusEl.textContent = message;
+            statusEl.className = `status ${className}`;
+        }
+        
+        function updateListenerCount(count) {
+            document.getElementById('listenerCount').textContent = count;
+        }
+        
+        function connectWebSocket() {
+            const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+            const wsUrl = `${protocol}//${window.location.host}`;
+            socket = new WebSocket(wsUrl);
+            
+            socket.onopen = function() {
+                updateStatus('Connected - Ready to broadcast', 'connected');
+                socket.send(JSON.stringify({ type: 'broadcaster-join' }));
+                document.getElementById('startBtn').disabled = false;
+            };
+            
+            socket.onmessage = function(event) {
+                try {
+                    const data = JSON.parse(event.data);
+                    if (data.type === 'listener-count') {
+                        updateListenerCount(data.count);
+                    }
+                } catch (e) {
+                    // Ignore non-JSON messages
+                }
+            };
+            
+            socket.onclose = function() {
+                updateStatus('Disconnected from server', 'disconnected');
+                updateListenerCount(0);
+                document.getElementById('startBtn').disabled = true;
+                document.getElementById('stopBtn').disabled = true;
+                
+                // Try to reconnect after 3 seconds
+                setTimeout(connectWebSocket, 3000);
+            };
+            
+            socket.onerror = function(error) {
+                console.error('WebSocket error:', error);
+                updateStatus('Connection Error', 'disconnected');
+            };
+        }
+        
+        async function startBroadcast() {
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ 
+                    audio: {
+                        echoCancellation: true,
+                        noiseSuppression: true,
+                        autoGainControl: true
+                    }
+                });
+                
+                audioContext = new AudioContext();
+                source = audioContext.createMediaStreamSource(stream);
+                
+                // Try different codec options for better compatibility, prioritizing Android support
+                const codecOptions = [
+                    'audio/mp4',                    // Better Android support
+                    'audio/webm;codecs=opus',      // Modern browsers
+                    'audio/webm',                  // Fallback WebM
+                    'audio/ogg;codecs=opus',       // Additional fallback
+                    ''                             // Let browser choose
+                ];
+                
+                let selectedCodec = null;
+                for (const codec of codecOptions) {
+                    if (codec === '' || MediaRecorder.isTypeSupported(codec)) {
+                        selectedCodec = codec;
+                        console.log('Selected codec:', codec || 'browser default');
+                        break;
+                    }
+                }
+                
+                console.log('Available codecs check:');
+                codecOptions.forEach(codec => {
+                    if (codec !== '') {
+                        console.log(`${codec}: ${MediaRecorder.isTypeSupported(codec)}`);
+                    }
+                });
+                
+                mediaRecorder = new MediaRecorder(stream, {
+                    mimeType: selectedCodec,
+                    audioBitsPerSecond: 64000 // Lower bitrate for better compatibility
+                });
+                
+                mediaRecorder.ondataavailable = function(event) {
+                    if (event.data.size > 0 && socket.readyState === WebSocket.OPEN) {
+                        console.log('Sending audio chunk:', event.data.size, 'bytes');
+                        socket.send(event.data);
+                    } else {
+                        console.log('Skipping empty or disconnected chunk:', event.data.size);
+                    }
+                };
+                
+                mediaRecorder.start(1000); // Send data every 1 second for bigger chunks
+                
+                updateStatus('🔴 Broadcasting Live!', 'streaming');
+                document.getElementById('startBtn').disabled = true;
+                document.getElementById('stopBtn').disabled = false;
+                
+            } catch (error) {
+                console.error('Error starting broadcast:', error);
+                let errorMessage = 'Could not access microphone. ';
+                if (error.name === 'NotAllowedError') {
+                    errorMessage += 'Please allow microphone access and try again.';
+                } else if (error.name === 'NotFoundError') {
+                    errorMessage += 'No microphone found.';
+                } else {
+                    errorMessage += 'Please check your microphone settings.';
+                }
+                alert(errorMessage);
+            }
+        }
+        
+        function stopBroadcast() {
+            if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+                mediaRecorder.stop();
+            }
+            
+            if (audioContext) {
+                audioContext.close();
+            }
+            
+            updateStatus('Connected - Ready to broadcast', 'connected');
+            document.getElementById('startBtn').disabled = false;
+            document.getElementById('stopBtn').disabled = true;
+        }
+        
+        // Connect when page loads
+        window.onload = function() {
+            // Update listener URL with current host
+            document.getElementById('listenerUrl').textContent = `${window.location.protocol}//${window.location.host}/listen`;
+            connectWebSocket();
+        };
+        
+        // Clean up when page unloads
+        window.onbeforeunload = function() {
+            stopBroadcast();
+            if (socket) {
+                socket.close();
+            }
+        };
+    </script>
+</body>
+</html>

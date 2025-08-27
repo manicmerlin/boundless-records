@@ -8,6 +8,7 @@ Visit us at: [boundlessrecords.xyz](https://boundlessrecords.xyz)
 ## Artists
 - **Bennett Boundless** - Visionary artist pushing musical boundaries
 - **Alma de Agustina** - Emerging talent with soulful storytelling
+- **Manic Merlin** - Meditative focus & flow style soundscapes
 
 ## About
 Boundless Records is an independent music label based in South Florida, dedicated to discovering and nurturing exceptional talent. We believe in the power of music to transcend boundaries and connect people across cultures and communities.
